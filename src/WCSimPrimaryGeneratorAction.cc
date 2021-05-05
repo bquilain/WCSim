@@ -487,13 +487,12 @@ void WCSimPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	if ( !myNiBallGenerator ) {
         	myNiBallGenerator = new WCSimGenerator_NiBall(myDetector);
 		myNiBallGenerator->Initialize();
-  		randGen = new TRandom3();
         }
 	MyGPS->ClearAll();
      	fNiBallPosition[0] = niball_X;
      	fNiBallPosition[1] = niball_Y;
      	fNiBallPosition[2] = niball_Z;
-	for (int jj=0; jj<4; jj++) rn[jj] = randGen->Rndm();
+	for (int jj=0; jj<4; jj++) rn[jj] = G4UniformRand();
 	myNiBallGenerator->SettingNiBall(fNiBallPosition,rn);
 	int mode = myNiBallGenerator->GetNiGammaMode();
 	int multi = myNiBallGenerator->GetNiGammaMultiplicity();
@@ -502,6 +501,8 @@ void WCSimPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	double * gposition = myNiBallGenerator->GetNiGammaPosition();
 	double theta,phi;
 
+
+	for(int kk=0; kk<multi; kk++) std::cout << genergy[kk] << std::endl;
 
 	multi = 1; // to be removed when multiple vertices enabled
 	
@@ -514,7 +515,6 @@ void WCSimPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
                 MyGPS->GetCurrentSource()->GetEneDist()->SetMonoEnergy(genergy[kk]*MeV);
                 MyGPS->GetCurrentSource()->GetPosDist()->SetPosDisType("Point");
                 MyGPS->GetCurrentSource()->GetPosDist()->SetCentreCoords(position);
-		//std::cout << genergy[kk] << std::endl;
 		//std::cout << position << std::endl;
 	}
 	G4int number_of_sources = MyGPS->GetNumberofSource();
@@ -535,8 +535,8 @@ void WCSimPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
                 G4ThreeVector vtx =anEvent->GetPrimaryVertex(u)->GetPosition();
                 G4int pdg         =anEvent->GetPrimaryVertex(u)->GetPrimary()->GetPDGcode();
                 G4double E        = std::sqrt((P.dot(P)));
-	        theta  = randGen->Rndm()*3.14159265;
-	        phi    = randGen->Rndm()*2.0*3.14159265;
+	        theta  = G4UniformRand()*3.14159265;
+	        phi    = G4UniformRand()*2.0*3.14159265;
        		fNiGammaDirection[0] = cos(phi)*sin(theta);
        		fNiGammaDirection[1] = sin(phi)*sin(theta);
        	 	fNiGammaDirection[2] = cos(theta);
